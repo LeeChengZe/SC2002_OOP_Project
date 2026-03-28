@@ -9,6 +9,21 @@ public class GameCLI {
         this.scanner = new Scanner(System.in);
     }
 
+    public void start() {
+        boolean playAgain = true;
+        while (playAgain) {
+            System.out.println("======Turn-Based Combat Arena======");
+            Player player = choosePlayer();
+            choseItems(player);
+            Level level = chooseLevel();
+            showSetupSummary(player, level);
+
+            BattleEngine engine = new BattleEngine(player, new LevelManager(level), new SpeedTurnOrderStrategy(), this);
+            engine.StartBattle();
+            playAgain = promptReplay();
+        }
+        System.out.println("Thanks for Playing, See you soon!");
+    }
     /* 
        User input checking function 
        Function takes in a min and max value and ensures that the value stays within range
