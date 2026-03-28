@@ -25,6 +25,21 @@ public class GameCLI {
         System.out.println("Thanks for Playing, See you soon!");
     }
     /* 
+       Player selection function 
+       Allows Player the to choose between 1. Warrior or 2. Wizard
+    */
+    private Player choosePlayer() {
+        System.out.println("===== Choose your player =====");
+        System.out.println("1. Warrior (HP: 260, ATK: 40, DEF: 20, SPD: 30 \n" +
+                            "Special Skill: Shield Bash - Deal Basic Attack damage to selected enemy. Selected enemy is unable to take actions for the current turn and the next turn.)");
+        System.out.println("2. Wizard (HP: 200, ATK: 50, DEF: 10, SPD: 20 \n" +
+                            "Special Skill: Arcane Blast Effect - Deal Basic Attack damage to all enemies currently in combat. Each enemy defeated by Arcane Blast adds 10 to the Wizard's Attack, lasting until end of the level.)");
+        
+        int choice = readIntInRange(1, 2);
+        return choice == 1  new Warrior() : new Wizard();
+    }
+
+    /* 
        User input checking function 
        Function takes in a min and max value and ensures that the value stays within range
        Function ensures that only integer data type are accepted 
