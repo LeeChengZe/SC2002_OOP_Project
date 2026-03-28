@@ -36,7 +36,7 @@ public class GameCLI {
                             "Special Skill: Arcane Blast Effect - Deal Basic Attack damage to all enemies currently in combat. Each enemy defeated by Arcane Blast adds 10 to the Wizard's Attack, lasting until end of the level.)");
         
         int choice = readIntInRange(1, 2);
-        return choice == 1  new Warrior() : new Wizard();
+        return choice == 1 ? new Warrior() : new Wizard();
     }
 
     /* 
