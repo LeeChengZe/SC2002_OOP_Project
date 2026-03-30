@@ -26,8 +26,8 @@ public class GameCLI {
     }
 
     /* 
-       Player selection function 
-       Allows Player the to choose between 1. Warrior or 2. Wizard
+    *  Player selection function 
+    *  Allows Player the to choose between 1. Warrior or 2. Wizard
     */
     private Player choosePlayer() {
         System.out.println("===== Choose your player =====");
@@ -41,8 +41,8 @@ public class GameCLI {
     }
 
     /* 
-       Item choosing function 
-       Allows users to choose two items
+    *  Item choosing function 
+    *  Allows users to choose two items
     */
     private void chooseItems(Player player) {
         System.out.println("Choose 2 single-use items. Duplicates are allowed.");
@@ -70,8 +70,8 @@ public class GameCLI {
     }
 
     /*
-        Level selection function
-        Allow users to select their level of difficulty
+    *   Level selection function
+    *   Allow users to select their level of difficulty
     */
     private Level chooseLevel() {
         System.out.println("Choose difficulty level:");
@@ -92,8 +92,8 @@ public class GameCLI {
     }
 
     /*
-        Player setup summary function
-        Shows an overview of the player stats and items in inventory
+    *   Player setup summary function
+    *   Shows an overview of the player stats and items in inventory
     */
     private void showSetupSummary(Player player, Level level) {
         System.out.println("\nSelected Player: " + player.getName());
@@ -107,8 +107,8 @@ public class GameCLI {
     }
 
     /*
-        Action selection function
-        Allow user to choose their player action during gameplay
+    *   Action selection function
+    *   Allow user to choose their player action during gameplay
     */
     public Action promptAction(Player player, BattleEngine engine) {
         while (true) {
@@ -145,10 +145,12 @@ public class GameCLI {
         }
     }
 
+    
+
     /* 
-       User input checking function 
-       Function takes in a min and max value and ensures that the value stays within range
-       Function ensures that only integer data type are accepted 
+    *  User input checking function 
+    *  Function takes in a min and max value and ensures that the value stays within range
+    *  Function ensures that only integer data type are accepted 
     */
     private int readIntInRange(int min, int max) {
         while (true) {
