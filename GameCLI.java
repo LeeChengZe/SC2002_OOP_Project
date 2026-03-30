@@ -1,6 +1,7 @@
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
+import javax.swing.Action;
 
 public class GameCLI {
     private final Scanner scanner;
@@ -145,7 +146,95 @@ public class GameCLI {
         }
     }
 
-    
+    /*
+    *  Helper function that decides whether an item requires the player to select a target before using it
+    */
+    private boolean needsTarget(Item item, Player player) {
+        return item instanceof PowerStone && player instanceof Warrior;
+    }
+
+    /*
+    *  Function that handles target selection during combat
+    */
+    private Enemy selectEnemyTarget(List<Enemy> enemies) {
+        List<Enemy> alive = enemies;
+        System.out.println("Choose target:");
+        for (int i = 0; i < alive.size(); i++) {
+            Enemy enemy = alive.get(i);
+            System.out.println((i + 1) + ". " + enemy.getName() + " (HP " + enemy.getCurrentHp() + "/" + enemy.getMaxHp() + ")");
+        }
+        int choice = readIntInRange(1, alive.size());
+        return alive.get(choice - 1);
+    }
+
+    /*
+    *  Function that display the battle status after every round
+    */
+    public void displayBattleStatus(BattleEngine engine) {
+        Player player = engine.getPlayer();
+        System.out.println("\nPlayer: " + player.getName() +
+                " | HP " + player.getCurrentHp() + "/" + player.getMaxHp() +
+                " | ATK " + player.getAttack() +
+                " | DEF " + player.getDefense() +
+                " | SPD " + player.getSpeed() +
+                " | Cooldown " + player.getSpecialSkillCooldown() +
+                " | Status " + player.getStatusSummary());
+        if (!player.getInventory().isEmpty()) {
+            System.out.print("Inventory: ");
+            for (Item item : player.getInventory().getItems()) {
+                System.out.print(item.getName() + "  ");
+            }
+            System.out.println();
+        }
+        if (engine.isSmokeBombActiveAgainstEnemies()) {
+            System.out.println("Smoke Bomb active for " + engine.getSmokeBombTurnsRemaining() + " more turn(s).");
+        }
+        System.out.println("Enemies:");
+        for (Enemy enemy : engine.getEnemies()) {
+            System.out.println("- " + enemy.getName() + " | HP " + enemy.getCurrentHp() + "/" + enemy.getMaxHp() +
+                    " | ATK " + enemy.getAttack() + " | DEF " + enemy.getDefense() +
+                    " | SPD " + enemy.getSpeed() + " | Status " + enemy.getStatusSummary() +
+                    " | " + (enemy.isAlive() ? "Alive" : "Eliminated"));
+        }
+    }
+
+    /*
+    *  Display the results after the game is complete
+    */
+    public void displayGameResult(BattleEngine engine) {
+        System.out.println("\n=== Game Complete ===");
+        if (engine.isPlayerVictorious()) {
+            System.out.println("Congratulations, you have defeated all your enemies.");
+            System.out.println("Statistics: Remaining HP: " + engine.getPlayer().getCurrentHp() +
+                    " | Total Rounds: " + engine.getRoundNumber());
+        } else {
+            System.out.println("Defeated. Don't give up, try again!");
+            System.out.println("Statistics: Enemies remaining: " + engine.getAliveEnemies().size() +
+                    " | Total Rounds Survived: " + engine.getRoundNumber());
+        }
+    }
+
+    /*
+    *  Function that check if the users want to replay the game
+    */
+    private boolean promptReplay() {
+        System.out.println("\n1. Replay with new settings");
+        System.out.println("2. Exit");
+        int choice = readIntInRange(1, 2);
+        return choice == 1;
+    }
+
+    /*
+    *  Function that deals with the selection of item
+    */
+    private Item selectItem(List<Item> items) {
+        System.out.println("Choose item:");
+        for (int i = 0; i < items.size(); i++) {
+            System.out.println((i + 1) + ". " + items.get(i).getName());
+        }
+        int choice = readIntInRange(1, items.size());
+        return items.get(choice - 1);
+    }
 
     /* 
     *  User input checking function 
