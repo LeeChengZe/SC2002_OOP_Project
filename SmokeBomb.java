@@ -8,8 +8,7 @@ public class SmokeBomb implements Item {
 
     @Override
     public void use(Combatant user, Combatant target, BattleEngine engine) {
-        engine.setSmokeBombTurnsRemaining(2);
-        engine.getBattleLog().addMessage(user.getName() + " used Smoke Bomb. Enemy attacks deal 0 damage for current turn and next turn.");
+        target.applyStatusEffect(new StunEffect(1));
+        engine.getBattleLog().addMessage(user.getName() + " throws a Smoke Bomb! " + target.getName() + " is stunned!");
     }
-}
 }
