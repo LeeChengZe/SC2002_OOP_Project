@@ -1,0 +1,8 @@
+public class WarriorSkillAction implements Action {
+    public void execute(Combatant actor, Combatant target) {
+        int damage = Math.max(0, actor.attack - target.defense);
+        target.takeDamage(damage);
+        target.addEffect(new StunEffect(2));
+        actor.setCooldown(3);
+    }
+}
