@@ -24,6 +24,10 @@ public abstract class Combatant {
         currentHp = Math.max(0, currentHp - dmg);
     }
 
+    public void setDefense(int def) {
+        defense = def;
+    }
+
     public void heal(int amount) {
         currentHp = Math.min(maxHp, currentHp + amount);
     }
@@ -70,4 +74,8 @@ public abstract class Combatant {
         return speed;
     }
 
+    
+    public String getName() {
+        return this.name;
+    }
 }
