@@ -13,6 +13,9 @@ public class BattleEngine {
     private int roundNumber;
     private int smokeBombTurnsRemaining;
 
+    /*
+        Constructor to initialise the battle engine
+    */
     public BattleEngine(Player player, LevelManager levelManager, TurnOrderStrategy turnOrderStrategy, GameCLI gameCLI) {
     this.player = player;
     this.levelManager = levelManager;
@@ -24,6 +27,9 @@ public class BattleEngine {
     this.smokeBombTurnsRemaining = 0;
     } 
 
+    /*
+        Controls game loop until win or lose
+    */
     public void startBattle() {
         battleLog.addMessage("Start Battle");
         while (!isBattleOver()) {
@@ -37,6 +43,9 @@ public class BattleEngine {
         gameCLI.displayGameResult(this);
     }
 
+    /*
+        Processes one round (1. turn order 2. execute actions)
+    */
     private void processRound() {
         List<Combatant> activeCombatants = new ArrayList<>();
         if (player.isAlive()) {
@@ -45,7 +54,7 @@ public class BattleEngine {
         activeCombatants.addAll(getAliveEnemies());
 
         List<Combatant> turnOrder = turnOrderStrategy.determineTurnOrder(activeCombatants);
-        for (Combatant combatant : turnOrder) {
+        for (Combatant combatant : turnOrder) { //?
             if (isBattleOver() || !combatant.isAlive()) {
                 continue;
             }
@@ -75,19 +84,26 @@ public class BattleEngine {
         }
     }
 
+    /*
+        Updates round based variables (e.g. smoke bomb)
+    */
     private void decrementRoundBasedEffects() {
         if (smokeBombTurnsRemaining > 0) {
             smokeBombTurnsRemaining--;
         }
 
-
-        private void displayAliveOrEliminatedStatus() {
-            battleLog.addMessage(player.getName() + ": " + (player.isAlive() ? "Alive" : "Eliminated"));
-            for (Enemy enemy : enemies) { 
-                battleLog.addMessage(enemy.getName() + ": " + (enemy.isAlive() ? "Alive" : "Eliminated"));
-            }
+    /*
+        Display alive or eliminated status (where?)
+    */
+    private void displayAliveOrEliminatedStatus() {
+        battleLog.addMessage(player.getName() + ": " + (player.isAlive() ? "Alive" : "Eliminated"));
+        for (Enemy enemy : enemies) { //?
+            battleLog.addMessage(enemy.getName() + ": " + (enemy.isAlive() ? "Alive" : "Eliminated"));
         }
-
+    }
+    /*
+        Spawns backup enemies
+    */
     private void handleBackupSpawnIfNeeded() {
         if (getAliveEnemies().isEmpty() && levelManager.hasBackupEnemies()) {
             List<Enemy> spawned = levelManager.spawnBackupEnemies();
@@ -98,14 +114,24 @@ public class BattleEngine {
             }
         }
     }
-
+    /*
+    Helper: Check if battle over
+    */
     public boolean isBattleOver() {
         return !player.isAlive() || getAliveEnemies().isEmpty() && !levelManager.hasBackupEnemies();
     }
 
+
+    /*
+    Helper: Check if player won
+    */
     public boolean isPlayerVictorious() {
         return player.isAlive() && getAliveEnemies().isEmpty() && !levelManager.hasBackupEnemies();
     }
+
+    /*
+    Returns a list of currently alive enemies
+    */
     public List<Enemy> getAliveEnemies() {
         List<Enemy> alive = new ArrayList<>();
         for (Enemy enemy : enemies) { //?
