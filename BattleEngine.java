@@ -25,7 +25,7 @@ public class BattleEngine {
     this.enemies = new ArrayList<>(levelManager.getInitialEnemies());
     this.roundNumber = 1;
     this.smokeBombTurnsRemaining = 0;
-    } 
+    }
 
     /*
         Controls game loop until win or lose
