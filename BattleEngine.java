@@ -36,6 +36,9 @@ public class BattleEngine {
             battleLog.addMessage("\n=== Round " + roundNumber + "! ===");
             gameCLI.displayBattleStatus(this);
             processRound();
+            if (isBattleOver()) {
+                break;
+            }
             handleBackupSpawnIfNeeded();
             decrementRoundBasedEffects();
             roundNumber++;
@@ -54,43 +57,52 @@ public class BattleEngine {
         activeCombatants.addAll(getAliveEnemies());
 
         List<Combatant> turnOrder = turnOrderStrategy.determineTurnOrder(activeCombatants);
-        for (Combatant combatant : turnOrder) { //?
+        for (Combatant combatant : turnOrder) {
             if (isBattleOver() || !combatant.isAlive()) {
                 continue;
             }
 
-            combatant.processStatusEffects(this);
-            if (!combatant.isAlive()) {
+            combatant.processTurnStartEffects(this);
+            if (!combatant.isAlive() || isBattleOver()) {
                 continue;
             }
 
-            if (!combatant.canAct()) {
-                combatant.onTurnTaken();
+            if (combatant.hasEffect(StunEffect.class)) {
+                combatant.reduceSpecialSkillCooldown();
+                displayAliveOrEliminatedStatus();
                 continue;
             }
 
             Action action;
             if (combatant instanceof Player) {
-                action = ((Player) combatant).getPlayerAction(gameCLI, this); //?
+                action = ((Player) combatant).getPlayerAction(gameCLI, this);
             } else {
-                action = ((Enemy) combatant).chooseAction(player); //?
+                action = ((Enemy) combatant).chooseAction(player);
             }
 
             if (action != null) {
                 action.execute(combatant, this);
             }
-            combatant.onTurnTaken();
+
+            combatant.reduceSpecialSkillCooldown();
             displayAliveOrEliminatedStatus();
+
+            if (!player.isAlive()) {
+                return;
+            }
+            handleBackupSpawnIfNeeded();
         }
     }
 
     /*
         Updates round based variables (e.g. smoke bomb)
     */
-    private void decrementRoundBasedEffects() {
-        if (smokeBombTurnsRemaining > 0) {
-            smokeBombTurnsRemaining--;
+    private void processRoundEndEffects() {
+        player.processRoundEndEffects(this);
+        for (Enemy enemy : enemies) {
+            enemy.processRoundEndEffects(this);
         }
+    }
 
     /*
         Display alive or eliminated status (where?)
@@ -134,7 +146,7 @@ public class BattleEngine {
     */
     public List<Enemy> getAliveEnemies() {
         List<Enemy> alive = new ArrayList<>();
-        for (Enemy enemy : enemies) { //?
+        for (Enemy enemy : enemies) {
             if (enemy.isAlive()) {
                 alive.add(enemy);
             }
@@ -147,7 +159,7 @@ public class BattleEngine {
     }
 
     public List<Enemy> getEnemies() {
-        return enemies;
+        return new ArrayList<>(enemies);
     }
 
     public int getRoundNumber() {
