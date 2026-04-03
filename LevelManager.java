@@ -3,22 +3,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LevelManager {
-    private level selectedLevel;
+    private Level selectedLevel;
     private List<Enemy> initialEnemies;
-    private list<Enemy> backupEnemies;
+    private List<Enemy> backupEnemies;
 
-    public levelManager(level selectedLevel) {
+    public LevelManager(Level selectedLevel) {
         this.selectedLevel = selectedLevel;
         this.initialEnemies = createInitialEnemies();
         this.backupEnemies = createBackupEnemies();
     }
 
-    public level getSelectedLevel() {
+    public Level getSelectedLevel() {
         return selectedLevel;
     }
 
     public List<Enemy> getInitialEnemies() {
-        return initialEnemeies;
+        return initialEnemies;
     }
 
     public List<Enemy> getBackupEnemies() {
@@ -30,15 +30,16 @@ public class LevelManager {
     }
 
     public List<Enemy> spawnbackupEnemies() {
-        List<Enemy> spawned = new Array<>(backupEnemies);
+        List<Enemy> spawned = new ArrayList<>(backupEnemies);
         backupEnemies.clear();
         return spawned;
     }
 
     private List<Enemy> createInitialEnemies() {
-        List<enemy> enemies = new ArrayList<>(); 
+        List<Enemy> enemies = new ArrayList<>();
 
         switch (selectedLevel) {
+            case EASY:
                 enemies.add(new Goblin("Goblin A"));
                 enemies.add(new Goblin("Goblin B"));
                 enemies.add(new Goblin("Goblin C"));
@@ -58,8 +59,9 @@ public class LevelManager {
     }
 
     private List<Enemy> createBackupEnemies() {
-        List<Enemy> enemies = new ArrayList<>(); 
+        List<Enemy> enemies = new ArrayList<>();
         switch (selectedLevel) {
+            case MEDIUM:
                 enemies.add(new Wolf("Wolf A"));
                 enemies.add(new Wolf("Wolf B"));
                 break;
@@ -71,6 +73,6 @@ public class LevelManager {
             default:
                 break;
         }
-        return enemies;    
+        return enemies;
     }
 }

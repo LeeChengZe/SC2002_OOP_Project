@@ -17,14 +17,14 @@ public class BattleEngine {
         Constructor to initialise the battle engine
     */
     public BattleEngine(Player player, LevelManager levelManager, TurnOrderStrategy turnOrderStrategy, GameCLI gameCLI) {
-    this.player = player;
-    this.levelManager = levelManager;
-    this.turnOrderStrategy = turnOrderStrategy;
-    this.gameCLI = gameCLI;
-    this.battleLog = new BattleLog();
-    this.enemies = new ArrayList<>(levelManager.getInitialEnemies());
-    this.roundNumber = 1;
-    this.smokeBombTurnsRemaining = 0;
+        this.player = player;
+        this.levelManager = levelManager;
+        this.turnOrderStrategy = turnOrderStrategy;
+        this.gameCLI = gameCLI;
+        this.battleLog = new BattleLog();
+        this.enemies = new ArrayList<>(levelManager.getInitialEnemies());
+        this.roundNumber = 1;
+        this.smokeBombTurnsRemaining = 0;
     }
 
     /*
@@ -54,7 +54,8 @@ public class BattleEngine {
         activeCombatants.addAll(getAliveEnemies());
 
         List<Combatant> turnOrder = turnOrderStrategy.determineTurnOrder(activeCombatants);
-        for (Combatant combatant : turnOrder) { //?
+        // lops through every combatant in turn order
+        for (Combatant combatant : turnOrder) { 
             if (isBattleOver() || !combatant.isAlive()) {
                 continue;
             }
@@ -97,7 +98,7 @@ public class BattleEngine {
     */
     private void displayAliveOrEliminatedStatus() {
         battleLog.addMessage(player.getName() + ": " + (player.isAlive() ? "Alive" : "Eliminated"));
-        for (Enemy enemy : enemies) { //?
+        for (Enemy enemy : enemies) { 
             battleLog.addMessage(enemy.getName() + ": " + (enemy.isAlive() ? "Alive" : "Eliminated"));
         }
     }
@@ -109,7 +110,7 @@ public class BattleEngine {
             List<Enemy> spawned = levelManager.spawnBackupEnemies();
             enemies.addAll(spawned);
             battleLog.addMessage("Backup Spawn triggered!");
-            for (Enemy enemy : spawned) { //?
+            for (Enemy enemy : spawned) { 
                 battleLog.addMessage(enemy.getName() + " enters the battle.");
             }
         }
@@ -134,7 +135,7 @@ public class BattleEngine {
     */
     public List<Enemy> getAliveEnemies() {
         List<Enemy> alive = new ArrayList<>();
-        for (Enemy enemy : enemies) { //?
+        for (Enemy enemy : enemies) { 
             if (enemy.isAlive()) {
                 alive.add(enemy);
             }
