@@ -14,12 +14,12 @@ public class GameCLI {
         while (playAgain) {
             System.out.println("====== Turn-Based Combat Arena ======");
             Player player = choosePlayer();
-            choseItems(player);
+            chooseItems(player);
             Level level = chooseLevel();
             showSetupSummary(player, level);
 
             BattleEngine engine = new BattleEngine(player, new LevelManager(level), new SpeedTurnOrderStrategy(), this);
-            engine.StartBattle();
+            engine.startBattle();
             playAgain = promptReplay();
         }
         System.out.println("Thanks for Playing, See you soon!");
@@ -97,7 +97,7 @@ public class GameCLI {
     */
     private void showSetupSummary(Player player, Level level) {
         System.out.println("\nSelected Player: " + player.getName());
-        System.out.println("HP: " + player.getMaxHp() + " | ATK: " + player.getAttack() + " | DEF: " + player.getBaseDefense() + " | SPD: " + player.getSpeed());
+        System.out.println("HP: " + player.getMaxHp() + " | ATK: " + player.getAttack() + " | DEF: " + player.getDefense() + " | SPD: " + player.getSpeed());
                System.out.println("Special Skill: " + player.getSpecialSkillName());
         System.out.println("Items:");
         for (Item item : player.getInventory().getItems()) {
@@ -131,7 +131,7 @@ public class GameCLI {
                         continue;
                     }
                     Item item = selectItem(player.getInventory().getItems());
-                    Combatant target = needsTarget(item, player) ? selectEnemyTarget(engine.getAliveEnemies()) : player;
+                    Combatant target = needsEnemyTarget(item, player) ? selectEnemyTarget(engine.getAliveEnemies()) : player;
                     return new UseItemAction(item, target);
                 case 4:
                     if (!player.isSpecialSkillReady()) {
@@ -139,7 +139,7 @@ public class GameCLI {
                         continue;
                     }
                     Combatant skillTarget = player instanceof Warrior ? selectEnemyTarget(engine.getAliveEnemies()) : null;
-                    return new SpecialSkillAction(skillTarget);
+                    return player.createSpecialSkillAction(engine, skillTarget, true);
                 default:
                     break;
             }

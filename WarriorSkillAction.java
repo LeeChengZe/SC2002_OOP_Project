@@ -1,9 +1,36 @@
-// This class implements the Action interface and defines the behavior for a warrior's special skill in combat. When executed, it calculates damage based on the actor's attack and the target's defense, applies that damage to the target, and then applies a stun effect to the target for 2 turns. Additionally, it sets a cooldown of 3 turns for the actor, preventing them from using this skill again until the cooldown expires.
 public class WarriorSkillAction implements Action {
-    public void execute(Combatant actor, Combatant target) {
-        int damage = Math.max(0, actor.attack - target.defense);
+    private final Enemy target;
+    private final boolean consumeCooldown;
+
+    public WarriorSkillAction(Enemy target, boolean consumeCooldown) {
+        this.target = target;
+        this.consumeCooldown = consumeCooldown;
+    }
+
+    @Override
+    public String getName() {
+        return "Shield Bash";
+    }
+
+    @Override
+    public void execute(Combatant actor, BattleEngine engine) {
+        if (target == null || !target.isAlive()) {
+            engine.getBattleLog().addMessage(actor.getName() + " has no valid target for Shield Bash.");
+            return;
+        }
+
+        int damage = actor.calculateDamageAgainst(target);
         target.takeDamage(damage);
-        target.addEffect(new StunEffect(2));
-        actor.setCooldown(3);
+        target.addStatusEffect(new StunEffect(2), engine);
+        if (consumeCooldown) {
+            actor.setSpecialSkillCooldown(3);
+        }
+
+        engine.getBattleLog().addMessage(actor.getName() + " uses Shield Bash on " + target.getName()
+                + " for " + damage + " damage and stuns the target for the current turn and the next turn.");
+
+        if (!target.isAlive()) {
+            engine.getBattleLog().addMessage(target.getName() + " is eliminated.");
+        }
     }
 }

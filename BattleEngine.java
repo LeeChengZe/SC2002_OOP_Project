@@ -1,8 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.Action;
-
 public class BattleEngine {
     private final Player player;
     private final LevelManager levelManager;
@@ -40,7 +38,7 @@ public class BattleEngine {
                 break;
             }
             handleBackupSpawnIfNeeded();
-            decrementRoundBasedEffects();
+            processRoundEndEffects();
             roundNumber++;
         }
         gameCLI.displayGameResult(this);
@@ -82,7 +80,7 @@ public class BattleEngine {
             if (combatant instanceof Player) {
                 action = ((Player) combatant).getPlayerAction(gameCLI, this);
             } else {
-                action = ((Enemy) combatant).chooseAction(player);
+                action = ((Enemy) combatant).chooseAction(this, player);
             }
 
             if (action != null) {

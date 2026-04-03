@@ -1,22 +1,15 @@
-import java.util.*;
-
 public class Wizard extends Player {
-    private int arcaneBonus;
     public Wizard() {
         super("Wizard", 200, 50, 10, 20);
     }
-        @Override
-        public void takeTurn(){
-            System.out.println("Wizard takes turn");
-        }
 
-        @Override
-        public Action decideAction(){
-            return null;
-        }
+    @Override
+    public String getSpecialSkillName() {
+        return "Arcane Blast";
+    }
 
-        @Override
-        public void useSpecialSkill(Combatant[] targets){
-            System.out.println("Wizard casts spell");
-        }
+    @Override
+    public Action createSpecialSkillAction(BattleEngine engine, Combatant target, boolean consumeCooldown) {
+        return new WizardSkillAction(consumeCooldown);
+    }
 }

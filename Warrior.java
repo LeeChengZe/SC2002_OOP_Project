@@ -1,21 +1,18 @@
-import java.util.*;
-
 public class Warrior extends Player {
     public Warrior() {
         super("Warrior", 260, 40, 20, 30);
     }
-        @Override
-        public void takeTurn(){
-            System.out.println("Warrior takes turn");
-        }
 
-        @Override
-        public Action decideAction(){
-            return null;
-        }
+    @Override
+    public String getSpecialSkillName() {
+        return "Shield Bash";
+    }
 
-        @Override
-        public void useSpecialSkill(Combatant[] targets){
-            System.out.println("Warrior uses special skill");
+    @Override
+    public Action createSpecialSkillAction(BattleEngine engine, Combatant target, boolean consumeCooldown) {
+        if (!(target instanceof Enemy)) {
+            throw new IllegalArgumentException("Warrior special skill requires an enemy target.");
         }
+        return new WarriorSkillAction((Enemy) target, consumeCooldown);
+    }
 }

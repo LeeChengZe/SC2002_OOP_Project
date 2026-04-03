@@ -1,8 +1,31 @@
-// This class implements the Action interface and defines the behavior for using an item in combat. When executed, it checks if the actor is an instance of Player and, if so, it uses the first item in the player's inventory on the actor. This allows the player to utilize items during combat, such as healing potions or buffs, to gain an advantage over their opponent.
+// This class implements the Action interface and defines the behavior for using an item in combat.
+// When executed, it removes the selected item from the player's inventory and applies the item effect.
 public class UseItemAction implements Action {
-    public void execute(Combatant actor, Combatant target) {
-        if (actor instanceof Player) {
-            ((Player) actor).getInventory().useItem(0, actor);
+    private final Item item;
+    private final Combatant target;
+
+    public UseItemAction(Item item, Combatant target) {
+        this.item = item;
+        this.target = target;
+    }
+
+    @Override
+    public String getName() {
+        return "Use Item";
+    }
+
+    @Override
+    public void execute(Combatant actor, BattleEngine engine) {
+        if (!(actor instanceof Player)) {
+            engine.getBattleLog().addMessage("Only players can use items.");
+            return;
         }
+
+        Player player = (Player) actor;
+        if (!player.getInventory().removeItem(item)) {
+            engine.getBattleLog().addMessage("Item is no longer available.");
+            return;
+        }
+        item.use(player, target, engine);
     }
 }

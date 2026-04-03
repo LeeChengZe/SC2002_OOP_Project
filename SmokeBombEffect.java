@@ -7,11 +7,15 @@ public class SmokeBombEffect extends StatusEffect {
     *  Method that tells the BattleEngine that the Smoke Bomb effect is still active and how many turns are left
     */
     @Override
-    public void onTurnStart(Combatant target, BattleEngine engine) {
-        engine.setSmokeBombTurnsRemaining(getRemainingTurns());
-        engine.getBattleLog().addMessage("Smoke Bomb effect is active. Enemy attacks deal 0 damage.");
+    public void onApply(Combatant target, BattleEngine engine) {
+        engine.setSmokeBombTurnsRemaining(getRemainingDuration());
     }
 
+    @Override
+    public void onRoundEnd(Combatant target, BattleEngine engine) {
+        decrementDuration();
+        engine.setSmokeBombTurnsRemaining(Math.max(0, getRemainingDuration()));
+    }
     /*
     *  Method that tells the BattleEngine that the Smoke Bomb effect has ended and to allow normal damage
     */
