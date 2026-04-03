@@ -1,81 +1,148 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 public abstract class Combatant {
-    protected String name;
-    protected int maxHp;
-    protected int currentHp;
-    protected int attack;
-    protected int defense;
-    protected int speed;
-    protected List<StatusEffect> statusEffects = new ArrayList<>();
-    protected int specialSkillCooldown = 0;
+    private final String name;
+    private final int maxHp;
+    private int currentHp;
+    private int attack;
+    private int defense;
+    private final int speed;
+    private int specialSkillCooldown;
+    private final List<StatusEffect> statusEffects;
 
-    public Combatant(String name, int maxHp, int attack, int defense, int speed){
-        this.name=name;
-        this.maxHp=maxHp;
-        this.currentHp=maxHp;
-        this.attack=attack;
-        this.defense=defense;
-        this.speed=speed;
+    protected Combatant(String name, int maxHp, int attack, int defense, int speed) {
+        this.name = name;
+        this.maxHp = maxHp;
+        this.currentHp = maxHp;
+        this.attack = attack;
+        this.defense = defense;
+        this.speed = speed;
+        this.specialSkillCooldown = 0;
+        this.statusEffects = new ArrayList<>();
     }
 
-    public abstract void takeTurn();
-
-    public void receiveDamage(int dmg) {
-        currentHp = Math.max(0, currentHp - dmg);
+    public String getName() {
+        return name;
     }
 
-    public void setDefense(int def) {
-        defense = def;
+    public int getMaxHp() {
+        return maxHp;
     }
 
-    public void heal(int amount) {
-        currentHp = Math.min(maxHp, currentHp + amount);
+    public int getCurrentHp() {
+        return currentHp;
     }
 
-    public void addStatusEffect(StatusEffect effect){
-        if (effect!=null){
-            statusEffects.add(effect);
-        }
+    public int getAttack() {
+        return attack;
     }
 
-    public void removeExpiredEffects() {
-        statusEffects.removeIf(e->e.isExpired());
+    public int getDefense() {
+        return defense;
     }
 
-    public void applyStatusEffects() {
-        for (StatusEffect e: statusEffects){
-            e.apply(this);
-        }
+    public int getSpeed() {
+        return speed;
     }
 
-    public boolean isAlive() {
-        return currentHp>0;
+    public int getSpecialSkillCooldown() {
+        return specialSkillCooldown;
     }
 
-    public boolean canAct(){
-        return isAlive();
+    public void setSpecialSkillCooldown(int cooldown) {
+        this.specialSkillCooldown = cooldown;
     }
 
-    public void reduceCooldown() {
-        if (specialSkillCooldown>0){
+    public void reduceSpecialSkillCooldown() {
+        if (specialSkillCooldown > 0) {
             specialSkillCooldown--;
         }
     }
 
-    public int getAttack(){
-        return attack;
+    public void increaseAttack(int amount) {
+        attack += amount;
     }
 
-    public int getDefense(){
-        return defense;
+    public void modifyDefense(int amount) {
+        defense += amount;
     }
 
-    public int getSpeed(){
-        return speed;
+    public int calculateDamageAgainst(Combatant target) {
+        return Math.max(0, this.attack - target.getDefense());
     }
 
-    
-    public String getName() {
-        return this.name;
+    public void takeDamage(int damage) {
+        currentHp = Math.max(0, currentHp - Math.max(0, damage));
+    }
+
+    public void heal(int amount) {
+        currentHp = Math.min(maxHp, currentHp + Math.max(0, amount));
+    }
+
+    public boolean isAlive() {
+        return currentHp > 0;
+    }
+
+    public void addStatusEffect(StatusEffect effect) {
+        addStatusEffect(effect, null);
+    }
+
+    public void addStatusEffect(StatusEffect effect, BattleEngine engine) {
+        statusEffects.add(effect);
+        if (engine != null) {
+            effect.onApply(this, engine);
+        }
+    }
+
+    public boolean hasEffect(Class<? extends StatusEffect> effectClass) {
+        for (StatusEffect effect : statusEffects) {
+            if (effectClass.isInstance(effect) && !effect.isExpired()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void processTurnStartEffects(BattleEngine engine) {
+        Iterator<StatusEffect> iterator = statusEffects.iterator();
+        while (iterator.hasNext()) {
+            StatusEffect effect = iterator.next();
+            if (effect instanceof StunEffect) {
+                effect.onTurnStart(this, engine);
+                if (effect.isExpired()) {
+                    effect.onExpire(this, engine);
+                    iterator.remove();
+                }
+            }
+        }
+    }
+
+    public void processRoundEndEffects(BattleEngine engine) {
+        Iterator<StatusEffect> iterator = statusEffects.iterator();
+        while (iterator.hasNext()) {
+            StatusEffect effect = iterator.next();
+            if (!(effect instanceof StunEffect)) {
+                effect.onRoundEnd(this, engine);
+                if (effect.isExpired()) {
+                    effect.onExpire(this, engine);
+                    iterator.remove();
+                }
+            }
+        }
+    }
+
+    public String getStatusSummary() {
+        if (statusEffects.isEmpty()) {
+            return "None";
+        }
+        List<String> names = new ArrayList<>();
+        for (StatusEffect effect : statusEffects) {
+            if (!effect.isExpired()) {
+                names.add(effect.getName() + "(" + effect.getRemainingDuration() + ")");
+            }
+        }
+        return names.isEmpty() ? "None" : String.join(", ", names);
     }
 }
