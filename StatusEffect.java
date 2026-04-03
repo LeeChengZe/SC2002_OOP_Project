@@ -1,30 +1,38 @@
 public abstract class StatusEffect {
     private final String name;
-    private int remainingTurns;
+    private int remainingDuration;
 
-    protected StatusEffect(String name, int remainingTurns) {
+    protected StatusEffect(String name, int remainingDuration) {
         this.name = name;
-        this.remainingTurns = remainingTurns;
+        this.remainingDuration = remainingDuration;
     }
 
     public String getName() {
         return name;
     }
 
-    public int getRemainingTurns() {
-        return remainingTurns;
+    public int getRemainingDuration() {
+        return remainingDuration;
     }
 
-    public boolean isActive() {
-        return remainingTurns > 0;
+    protected void decrementDuration() {
+        remainingDuration--;
     }
 
-    public void decrementDuration() {
-        remainingTurns--;
+    public boolean isExpired() {
+        return remainingDuration <= 0;
+    }
+
+    public void onApply(Combatant target, BattleEngine engine) {
+        
     }
 
     public void onTurnStart(Combatant target, BattleEngine engine) {
-        // Default no-op
+        
+    }
+
+    public void onRoundEnd(Combatant target, BattleEngine engine) {
+        
     }
 
     public void onExpire(Combatant target, BattleEngine engine) {

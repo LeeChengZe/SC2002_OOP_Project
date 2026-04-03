@@ -1,4 +1,3 @@
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,14 +28,14 @@ public class LevelManager {
         return !backupEnemies.isEmpty();
     }
 
-    public List<Enemy> spawnbackupEnemies() {
-        List<Enemy> spawned = new ArrayList<>(backupEnemies);
+    public List<Enemy> spawnBackupEnemies() {
+        List<Enemy> spawned = new ArrayList<Enemy>(backupEnemies);
         backupEnemies.clear();
         return spawned;
     }
 
     private List<Enemy> createInitialEnemies() {
-        List<Enemy> enemies = new ArrayList<>(); 
+        List<Enemy> enemies = new ArrayList<Enemy>(); 
 
         switch (selectedLevel) {
             case EASY:

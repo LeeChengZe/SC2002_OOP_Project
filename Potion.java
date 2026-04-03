@@ -1,6 +1,6 @@
 public class Potion implements Item {
-    private final String name = "Potion";
-    private final int healAmount = 100;
+    private String name = "Potion";
+    private int healAmount = 100;
 
     @Override
     public String getName() {
@@ -8,8 +8,8 @@ public class Potion implements Item {
     }
 
     @Override
-    public void use(Combatant user, Combatant target, BattleEngine engine) {
+    public void use(Player user, Combatant target, BattleEngine engine) {
         user.heal(healAmount);
-        engine.getBattleLog().addMessage(user.getName() + " used Potion and healed " + healAmount + " HP. Current HP: user.getCurrentHp() + \"/\" + user.getMaxHp()");
+        engine.getBattleLog().addMessage(user.getName() + " used Potion and healed " + healAmount + " HP. Current HP: " + user.getCurrentHp() + "/" + user.getMaxHp());
     }
 }
