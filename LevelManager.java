@@ -6,7 +6,7 @@ public class LevelManager {
     private level selectedLevel;
     private List<Enemy> initialEnemies;
     private list<Enemy> backupEnemies;
-    
+
     public levelManager(level selectedLevel) {
         this.selectedLevel = selectedLevel;
         this.initialEnemies = createInitialEnemies();
@@ -21,7 +21,6 @@ public class LevelManager {
         return initialEnemeies;
     }
 
-
     public List<Enemy> getBackupEnemies() {
         return backupEnemies;
     }
@@ -31,13 +30,13 @@ public class LevelManager {
     }
 
     public List<Enemy> spawnbackupEnemies() {
-        List<Enemy> spawned = new Array<>(backupEnemies); //?
+        List<Enemy> spawned = new Array<>(backupEnemies);
         backupEnemies.clear();
         return spawned;
     }
 
     private List<Enemy> createInitialEnemies() {
-        List<enemy> enemies = new ArrayList<>(); //?
+        List<enemy> enemies = new ArrayList<>(); 
 
         switch (selectedLevel) {
                 enemies.add(new Goblin("Goblin A"));
@@ -59,7 +58,7 @@ public class LevelManager {
     }
 
     private List<Enemy> createBackupEnemies() {
-        List<Enemy> enemies = new ArrayList<>(); //?
+        List<Enemy> enemies = new ArrayList<>(); 
         switch (selectedLevel) {
                 enemies.add(new Wolf("Wolf A"));
                 enemies.add(new Wolf("Wolf B"));

@@ -38,11 +38,11 @@ public abstract class Combatant {
         }
     }
 
-    public void removeExpiredEffects(){
+    public void removeExpiredEffects() {
         statusEffects.removeIf(e->e.isExpired());
     }
 
-    public void applyStatusEffects(){
+    public void applyStatusEffects() {
         for (StatusEffect e: statusEffects){
             e.apply(this);
         }
@@ -56,7 +56,7 @@ public abstract class Combatant {
         return isAlive();
     }
 
-    public void reduceCooldown(){
+    public void reduceCooldown() {
         if (specialSkillCooldown>0){
             specialSkillCooldown--;
         }
