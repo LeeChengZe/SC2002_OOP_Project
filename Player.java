@@ -1,17 +1,24 @@
-import java.util.*;
-
 public abstract class Player extends Combatant {
-    private Inventory inventory;
+    private final Inventory inventory;
 
-    public Player(String name, int maxHp, int attack, int defense, int speed) {
+    protected Player(String name, int maxHp, int attack, int defense, int speed) {
         super(name, maxHp, attack, defense, speed);
-        this.inventory= new Inventory();
+        this.inventory = new Inventory();
     }
-    public abstract Action decideAction();
 
-    public Inventory getInventory(){
+    public Inventory getInventory() {
         return inventory;
     }
 
-    public abstract void useSpecialSkill(Combatant[] targets);
+    public boolean isSpecialSkillReady() {
+        return getSpecialSkillCooldown() == 0;
+    }
+
+    public abstract String getSpecialSkillName();
+
+    public abstract Action createSpecialSkillAction(BattleEngine engine, Combatant target, boolean consumeCooldown);
+
+    public Action getPlayerAction(GameCLI gameCLI, BattleEngine engine) {
+        return gameCLI.promptAction(this, engine);
+    }
 }

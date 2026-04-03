@@ -3,5 +3,5 @@
 */
 public interface Item {
     String getName();
-    void use(Combatant user, Combatant target, BattleEngine engine);
+    void use(Player user, Combatant target, BattleEngine engine);
 }
