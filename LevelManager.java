@@ -2,15 +2,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LevelManager {
-<<<<<<< HEAD
-    private Level selectedLevel;
-    private List<Enemy> initialEnemies;
-    private List<Enemy> backupEnemies;
-=======
     private final Level selectedLevel;
     private final List<Enemy> initialEnemies;
     private final List<Enemy> backupEnemies;
->>>>>>> FixedError-Cz
 
     public LevelManager(Level selectedLevel) {
         this.selectedLevel = selectedLevel;
@@ -23,11 +17,7 @@ public class LevelManager {
     }
 
     public List<Enemy> getInitialEnemies() {
-<<<<<<< HEAD
-        return initialEnemies;
-=======
         return new ArrayList<Enemy>(initialEnemies);
->>>>>>> FixedError-Cz
     }
 
     public List<Enemy> getBackupEnemies() {
@@ -45,15 +35,7 @@ public class LevelManager {
     }
 
     private List<Enemy> createInitialEnemies() {
-<<<<<<< HEAD
-<<<<<<< HEAD
-        List<Enemy> enemies = new ArrayList<>();
-=======
-        List<Enemy> enemies = new ArrayList<>(); 
->>>>>>> FixedError-Cz
-=======
         List<Enemy> enemies = new ArrayList<Enemy>(); 
->>>>>>> FixedError-Cz
 
         switch (selectedLevel) {
             case EASY:
@@ -76,11 +58,7 @@ public class LevelManager {
     }
 
     private List<Enemy> createBackupEnemies() {
-<<<<<<< HEAD
-        List<Enemy> enemies = new ArrayList<>();
-=======
         List<Enemy> enemies = new ArrayList<Enemy>();
->>>>>>> FixedError-Cz
         switch (selectedLevel) {
             case MEDIUM:
                 enemies.add(new Wolf("Wolf A"));
