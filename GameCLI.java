@@ -1,7 +1,6 @@
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
-import javax.swing.Action;
 
 public class GameCLI {
     private final Scanner scanner;
@@ -13,7 +12,7 @@ public class GameCLI {
     public void start() {
         boolean playAgain = true;
         while (playAgain) {
-            System.out.println("======Turn-Based Combat Arena======");
+            System.out.println("====== Turn-Based Combat Arena ======");
             Player player = choosePlayer();
             choseItems(player);
             Level level = chooseLevel();
@@ -76,9 +75,9 @@ public class GameCLI {
     */
     private Level chooseLevel() {
         System.out.println("Choose difficulty level:");
-        System.out.println("1. Easy (Initial Spawn: 3 Goblins)");
-        System.out.println("2. Medium (Initial Spawn: 1 Goblin, 1 Wolf. Backup Spawn: 2 Wolves)");
-        System.out.println("3. Hard (Initial Spawn: 2 Goblins. Backup Spawn: 1 Goblin, 2 Wolves)");
+        System.out.println("1. Easy    - Initial Spawn: 3 Goblins");
+        System.out.println("2. Medium  - Initial Spawn: 1 Goblin, 1 Wolf | Backup: 2 Wolves");
+        System.out.println("3. Hard    - Initial Spawn: 2 Goblins | Backup: 1 Goblin, 2 Wolves");
         int choice = readIntInRange(1, 3);
         switch (choice) {
             case 1:
@@ -99,6 +98,7 @@ public class GameCLI {
     private void showSetupSummary(Player player, Level level) {
         System.out.println("\nSelected Player: " + player.getName());
         System.out.println("HP: " + player.getMaxHp() + " | ATK: " + player.getAttack() + " | DEF: " + player.getBaseDefense() + " | SPD: " + player.getSpeed());
+               System.out.println("Special Skill: " + player.getSpecialSkillName());
         System.out.println("Items:");
         for (Item item : player.getInventory().getItems()) {
             System.out.println("- " + item.getName());
@@ -149,7 +149,7 @@ public class GameCLI {
     /*
     *  Helper function that decides whether an item requires the player to select a target before using it
     */
-    private boolean needsTarget(Item item, Player player) {
+    private boolean needsEnemyTarget(Item item, Player player) {
         return item instanceof PowerStone && player instanceof Warrior;
     }
 
@@ -157,14 +157,13 @@ public class GameCLI {
     *  Function that handles target selection during combat
     */
     private Enemy selectEnemyTarget(List<Enemy> enemies) {
-        List<Enemy> alive = enemies;
         System.out.println("Choose target:");
-        for (int i = 0; i < alive.size(); i++) {
-            Enemy enemy = alive.get(i);
+        for (int i = 0; i < enemies.size(); i++) {
+            Enemy enemy = enemies.get(i);
             System.out.println((i + 1) + ". " + enemy.getName() + " (HP " + enemy.getCurrentHp() + "/" + enemy.getMaxHp() + ")");
         }
-        int choice = readIntInRange(1, alive.size());
-        return alive.get(choice - 1);
+        int choice = readIntInRange(1, enemies.size());
+        return enemies.get(choice - 1);
     }
 
     /*
@@ -218,7 +217,8 @@ public class GameCLI {
     *  Function that check if the users want to replay the game
     */
     private boolean promptReplay() {
-        System.out.println("\n1. Replay with new settings");
+        System.out.println("What would you like to do next?");
+        System.out.println("1. Replay with new settings");
         System.out.println("2. Exit");
         int choice = readIntInRange(1, 2);
         return choice == 1;

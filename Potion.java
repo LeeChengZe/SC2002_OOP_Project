@@ -10,6 +10,6 @@ public class Potion implements Item {
     @Override
     public void use(Combatant user, Combatant target, BattleEngine engine) {
         user.heal(healAmount);
-        engine.getBattleLog().addMessage(user.getName() + " used Potion and healed " + healAmount + " HP.");
+        engine.getBattleLog().addMessage(user.getName() + " used Potion and healed " + healAmount + " HP. Current HP: user.getCurrentHp() + \"/\" + user.getMaxHp()");
     }
 }

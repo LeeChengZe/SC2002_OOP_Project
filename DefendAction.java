@@ -1,6 +1,13 @@
-// This class implements the Action interface and defines the behavior for a defend action in combat. When executed, it applies a DefenseBuffEffect to the actor, increasing their defense by 10 for 2 turns. This allows the combatant to reduce incoming damage from attacks during that duration.
+// This class implements the Action interface and defines the behavior for a defend action in combat.
 public class DefendAction implements Action {
-    public void execute(Combatant actor, Combatant target) {
-        actor.addEffect(new DefenseBuffEffect(10, 2));
+    @Override
+    public String getName() {
+        return "Defend";
+    }
+
+    @Override
+    public void execute(Combatant actor, BattleEngine engine) {
+        actor.addStatusEffect(new DefenseBuffEffect(10, 2), engine);
+        engine.getBattleLog().addMessage(actor.getName() + " uses Defend and gains +10 DEF for this round and the next round.");
     }
 }

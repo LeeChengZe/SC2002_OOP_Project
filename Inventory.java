@@ -1,1 +1,23 @@
-public class Inventory{}
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class Inventory {
+    private final List<Item> items = new ArrayList<>();
+
+    public void addItem(Item item) {
+        items.add(item);
+    }
+
+    public boolean removeItem(Item item) {
+        return items.remove(item);
+    }
+
+    public List<Item> getItems() {
+        return Collections.unmodifiableList(items);
+    }
+
+    public boolean isEmpty() {
+        return items.isEmpty();
+    }
+}
