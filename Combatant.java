@@ -11,6 +11,7 @@ public abstract class Combatant {
     private final int speed;
     private int specialSkillCooldown;
     private final List<StatusEffect> statusEffects;
+    private boolean stunned;
 
     protected Combatant(String name, int maxHp, int attack, int defense, int speed) {
         this.name = name;
@@ -45,6 +46,14 @@ public abstract class Combatant {
 
     public int getSpeed() {
         return speed;
+    }
+
+    public boolean isStunned() {
+        return stunned;
+    }
+
+    public void setStunned(boolean stunned) {
+        this.stunned = stunned;
     }
 
     public int getSpecialSkillCooldown() {
@@ -106,17 +115,33 @@ public abstract class Combatant {
     }
 
     public void processTurnStartEffects(BattleEngine engine) {
+        for (StatusEffect effect : statusEffects) {
+            if (effect instanceof StunEffect) {
+                effect.onTurnStart(this, engine);
+                effect.decrementDuration();
+            }
+        }
+    }
+
+    public void cleanupExpiredEffects(BattleEngine engine) {
         Iterator<StatusEffect> iterator = statusEffects.iterator();
         while (iterator.hasNext()) {
             StatusEffect effect = iterator.next();
-            if (effect instanceof StunEffect) {
-                effect.onTurnStart(this, engine);
-                if (effect.isExpired()) {
-                    effect.onExpire(this, engine);
-                    iterator.remove();
-                }
+            if (effect.isExpired()) {
+                effect.onExpire(this, engine);
+                iterator.remove();
             }
         }
+    }
+
+    public void clearStatusEffects(BattleEngine engine) {
+        Iterator<StatusEffect> iterator = statusEffects.iterator();
+        while (iterator.hasNext()) {
+            StatusEffect effect = iterator.next();
+            effect.onExpire(this, engine);
+            iterator.remove();
+        }
+        setStunned(false);
     }
 
     public void processRoundEndEffects(BattleEngine engine) {

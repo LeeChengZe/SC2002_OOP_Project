@@ -21,15 +21,22 @@ public class WarriorSkillAction implements Action {
 
         int damage = actor.calculateDamageAgainst(target);
         target.takeDamage(damage);
-        target.addStatusEffect(new StunEffect(2), engine);
+
+        if (target.isAlive() && !target.hasEffect(StunEffect.class)) {
+            target.addStatusEffect(new StunEffect(2), engine);
+        }
+
         if (consumeCooldown) {
             actor.setSpecialSkillCooldown(3);
         }
 
-        engine.getBattleLog().addMessage(actor.getName() + " uses Shield Bash on " + target.getName()
-                + " for " + damage + " damage and stuns the target for the current turn and the next turn.");
+        engine.getBattleLog().addMessage(
+            actor.getName() + " uses Shield Bash on " + target.getName()
+            + " for " + damage + " damage and stuns the target for the current turn and the next turn."
+        );
 
         if (!target.isAlive()) {
+            target.clearStatusEffects(engine);
             engine.getBattleLog().addMessage(target.getName() + " is eliminated.");
         }
     }

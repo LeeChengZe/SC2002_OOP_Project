@@ -62,15 +62,16 @@ public class BattleEngine {
 
             combatant.processTurnStartEffects(this);
             if (!combatant.isAlive() || isBattleOver()) {
+                combatant.cleanupExpiredEffects(this);
                 continue;
             }
 
-            if (combatant.hasEffect(StunEffect.class)) {
-                combatant.reduceSpecialSkillCooldown();
-                displayAliveOrEliminatedStatus();
-                continue;
-            }
-
+        if (combatant.isStunned()) {
+            combatant.reduceSpecialSkillCooldown();
+            displayAliveOrEliminatedStatus();
+            combatant.cleanupExpiredEffects(this); 
+            continue;
+        }
             Action action;
             if (combatant instanceof Player) {
                 action = ((Player) combatant).getPlayerAction(gameCLI, this);
@@ -83,6 +84,7 @@ public class BattleEngine {
             }
 
             combatant.reduceSpecialSkillCooldown();
+            combatant.cleanupExpiredEffects(this);   // cleanup after acting
             displayAliveOrEliminatedStatus();
 
             if (!player.isAlive()) {

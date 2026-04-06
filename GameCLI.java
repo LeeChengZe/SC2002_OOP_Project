@@ -91,6 +91,13 @@ public class GameCLI {
         }
     }
 
+    public void displayBattleLog(BattleEngine engine) {
+    for (String message : engine.getBattleLog().getMessages()) {
+        System.out.println(message);
+    }
+    engine.getBattleLog().clearMessages();
+}
+
     /*
     *   Player setup summary function
     *   Shows an overview of the player stats and items in inventory
@@ -113,7 +120,8 @@ public class GameCLI {
     */
     public Action promptAction(Player player, BattleEngine engine) {
         while (true) {
-            System.out.println("\nChoose action for " + player.getName() + ":");
+            displayBattleLog(engine);
+            System.out.println("\nChoose action for " + player.getName() + ":");            
             System.out.println("1. Basic Attack");
             System.out.println("2. Defend");
             System.out.println("3. Item");
@@ -201,6 +209,7 @@ public class GameCLI {
     *  Display the results after the game is complete
     */
     public void displayGameResult(BattleEngine engine) {
+        displayBattleLog(engine);
         System.out.println("\n=== Game Complete ===");
         if (engine.isPlayerVictorious()) {
             System.out.println("Congratulations, you have defeated all your enemies.");
@@ -235,6 +244,8 @@ public class GameCLI {
         int choice = readIntInRange(1, items.size());
         return items.get(choice - 1);
     }
+
+    
 
     /* 
     *  User input checking function 

@@ -15,9 +15,11 @@ public class BattleLog {
     */
     public void addMessage(String message) {
         messages.add(message);
-        System.out.println(message);
     }
 
+    public void clearMessages() {
+        messages.clear();
+    }
     /*
     * Function to return the list of stored message
     */
