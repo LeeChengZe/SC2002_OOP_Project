@@ -25,25 +25,17 @@ public class GameCLI {
         System.out.println("Thanks for Playing, See you soon!");
     }
 
-    /* 
-    *  Player selection function 
-    *  Allows Player the to choose between 1. Warrior or 2. Wizard
-    */
     private Player choosePlayer() {
         System.out.println("===== Choose your player =====");
         System.out.println("1. Warrior (HP: 260, ATK: 40, DEF: 20, SPD: 30 \n" +
-                            "Special Skill: Shield Bash - Deal Basic Attack damage to selected enemy. Selected enemy is unable to take actions for the current turn and the next turn.)");
+                "Special Skill: Shield Bash - Deal Basic Attack damage to selected enemy. Selected enemy is unable to take actions for the current turn and the next turn.)");
         System.out.println("2. Wizard (HP: 200, ATK: 50, DEF: 10, SPD: 20 \n" +
-                            "Special Skill: Arcane Blast Effect - Deal Basic Attack damage to all enemies currently in combat. Each enemy defeated by Arcane Blast adds 10 to the Wizard's Attack, lasting until end of the level.)");
-        
+                "Special Skill: Arcane Blast Effect - Deal Basic Attack damage to all enemies currently in combat. Each enemy defeated by Arcane Blast adds 10 to the Wizard's Attack, lasting until end of the level.)");
+
         int choice = readIntInRange(1, 2);
         return choice == 1 ? new Warrior() : new Wizard();
     }
 
-    /* 
-    *  Item choosing function 
-    *  Allows users to choose two items
-    */
     private void chooseItems(Player player) {
         System.out.println("Choose 2 single-use items. Duplicates are allowed.");
         for (int i = 1; i <= 2; i++) {
@@ -69,10 +61,6 @@ public class GameCLI {
         }
     }
 
-    /*
-    *   Level selection function
-    *   Allow users to select their level of difficulty
-    */
     private Level chooseLevel() {
         System.out.println("Choose difficulty level:");
         System.out.println("1. Easy    - Initial Spawn: 3 Goblins");
@@ -91,21 +79,10 @@ public class GameCLI {
         }
     }
 
-    public void displayBattleLog(BattleEngine engine) {
-    for (String message : engine.getBattleLog().getMessages()) {
-        System.out.println(message);
-    }
-    engine.getBattleLog().clearMessages();
-}
-
-    /*
-    *   Player setup summary function
-    *   Shows an overview of the player stats and items in inventory
-    */
     private void showSetupSummary(Player player, Level level) {
         System.out.println("\nSelected Player: " + player.getName());
         System.out.println("HP: " + player.getMaxHp() + " | ATK: " + player.getAttack() + " | DEF: " + player.getDefense() + " | SPD: " + player.getSpeed());
-               System.out.println("Special Skill: " + player.getSpecialSkillName());
+        System.out.println("Special Skill: " + player.getSpecialSkillName());
         System.out.println("Items:");
         for (Item item : player.getInventory().getItems()) {
             System.out.println("- " + item.getName());
@@ -114,14 +91,9 @@ public class GameCLI {
         System.out.println();
     }
 
-    /*
-    *   Action selection function
-    *   Allow user to choose their player action during gameplay
-    */
     public Action promptAction(Player player, BattleEngine engine) {
         while (true) {
-            displayBattleLog(engine);
-            System.out.println("\nChoose action for " + player.getName() + ":");            
+            System.out.println("\nChoose action for " + player.getName() + " (Round " + engine.getRoundNumber() + "): ");
             System.out.println("1. Basic Attack");
             System.out.println("2. Defend");
             System.out.println("3. Item");
@@ -154,16 +126,10 @@ public class GameCLI {
         }
     }
 
-    /*
-    *  Helper function that decides whether an item requires the player to select a target before using it
-    */
     private boolean needsEnemyTarget(Item item, Player player) {
         return item instanceof PowerStone && player instanceof Warrior;
     }
 
-    /*
-    *  Function that handles target selection during combat
-    */
     private Enemy selectEnemyTarget(List<Enemy> enemies) {
         System.out.println("Choose target:");
         for (int i = 0; i < enemies.size(); i++) {
@@ -174,18 +140,25 @@ public class GameCLI {
         return enemies.get(choice - 1);
     }
 
-    /*
-    *  Function that display the battle status after every round
-    */
-    public void displayBattleStatus(BattleEngine engine) {
+    public void displayRoundOutput(BattleEngine engine) {
+        System.out.println("\n========== Round " + engine.getRoundNumber() + "! ==========");
+
+        System.out.println("\nActions:");
+        for (String message : engine.getBattleLog().getMessages()) {
+            System.out.println(message);
+        }
+        engine.getBattleLog().clearMessages();
+
         Player player = engine.getPlayer();
-        System.out.println("\nPlayer: " + player.getName() +
+        System.out.println("\nPlayer Status:");
+        System.out.println("Player: " + player.getName() +
                 " | HP " + player.getCurrentHp() + "/" + player.getMaxHp() +
                 " | ATK " + player.getAttack() +
                 " | DEF " + player.getDefense() +
                 " | SPD " + player.getSpeed() +
                 " | Cooldown " + player.getSpecialSkillCooldown() +
                 " | Status " + player.getStatusSummary());
+
         if (!player.getInventory().isEmpty()) {
             System.out.print("Inventory: ");
             for (Item item : player.getInventory().getItems()) {
@@ -193,23 +166,28 @@ public class GameCLI {
             }
             System.out.println();
         }
+
         if (engine.isSmokeBombActiveAgainstEnemies()) {
             System.out.println("Smoke Bomb active for " + engine.getSmokeBombTurnsRemaining() + " more turn(s).");
         }
-        System.out.println("Enemies:");
-        for (Enemy enemy : engine.getEnemies()) {
-            System.out.println("- " + enemy.getName() + " | HP " + enemy.getCurrentHp() + "/" + enemy.getMaxHp() +
-                    " | ATK " + enemy.getAttack() + " | DEF " + enemy.getDefense() +
-                    " | SPD " + enemy.getSpeed() + " | Status " + enemy.getStatusSummary() +
-                    " | " + (enemy.isAlive() ? "Alive" : "Eliminated"));
+
+        System.out.println("\nEnemies:");
+        for (Enemy enemy : engine.getAliveEnemies()) {
+            System.out.println("- " + enemy.getName() +
+                    " | HP " + enemy.getCurrentHp() + "/" + enemy.getMaxHp() +
+                    " | ATK " + enemy.getAttack() +
+                    " | DEF " + enemy.getDefense() +
+                    " | SPD " + enemy.getSpeed() +
+                    " | Status " + enemy.getStatusSummary() +
+                    " | Alive");
         }
     }
 
-    /*
-    *  Display the results after the game is complete
-    */
     public void displayGameResult(BattleEngine engine) {
-        displayBattleLog(engine);
+        if (!engine.getBattleLog().getMessages().isEmpty()) {
+            displayRoundOutput(engine);
+        }
+
         System.out.println("\n=== Game Complete ===");
         if (engine.isPlayerVictorious()) {
             System.out.println("Congratulations, you have defeated all your enemies.");
@@ -222,9 +200,6 @@ public class GameCLI {
         }
     }
 
-    /*
-    *  Function that check if the users want to replay the game
-    */
     private boolean promptReplay() {
         System.out.println("What would you like to do next?");
         System.out.println("1. Replay with new settings");
@@ -233,9 +208,6 @@ public class GameCLI {
         return choice == 1;
     }
 
-    /*
-    *  Function that deals with the selection of item
-    */
     private Item selectItem(List<Item> items) {
         System.out.println("Choose item:");
         for (int i = 0; i < items.size(); i++) {
@@ -245,13 +217,6 @@ public class GameCLI {
         return items.get(choice - 1);
     }
 
-    
-
-    /* 
-    *  User input checking function 
-    *  Function takes in a min and max value and ensures that the value stays within range
-    *  Function ensures that only integer data type are accepted 
-    */
     private int readIntInRange(int min, int max) {
         while (true) {
             try {
@@ -269,6 +234,6 @@ public class GameCLI {
                 System.out.println("Invalid input type. Please enter a number.");
                 scanner.nextLine();
             }
-        }   
+        }
     }
 }
