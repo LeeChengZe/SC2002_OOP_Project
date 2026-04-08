@@ -19,15 +19,19 @@ public class BasicAttackAction implements Action {
         }
 
         int damage = actor.calculateDamageAgainst(target);
-        if (actor instanceof Enemy && engine.isSmokeBombActiveAgainstEnemies()) {
+        boolean blockedBySmokeBomb = actor instanceof Enemy && engine.isSmokeBombActiveAgainstEnemies();
+        if (blockedBySmokeBomb) {
             damage = 0;
-            engine.getBattleLog().addMessage(actor.getName() + " attacks through Smoke Bomb, but deals 0 damage.");
         }
 
         target.takeDamage(damage);
-        engine.getBattleLog().addMessage(actor.getName() + " uses Basic Attack on " + target.getName()
-                + " for " + damage + " damage. " + target.getName() + " HP: "
-                + target.getCurrentHp() + "/" + target.getMaxHp());
+        if (blockedBySmokeBomb) {
+            engine.getBattleLog().addMessage(actor.getName() + " attacks through Smoke Bomb, but deals 0 damage.");
+        } else {
+            engine.getBattleLog().addMessage(actor.getName() + " uses Basic Attack on " + target.getName()
+                    + " for " + damage + " damage. " + target.getName() + " HP: "
+                    + target.getCurrentHp() + "/" + target.getMaxHp());
+        }
 
         if (!target.isAlive()) {
             engine.getBattleLog().addMessage(target.getName() + " is eliminated.");
