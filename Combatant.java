@@ -145,17 +145,22 @@ public abstract class Combatant {
     }
 
     public void processRoundEndEffects(BattleEngine engine) {
-        Iterator<StatusEffect> iterator = statusEffects.iterator();
-        while (iterator.hasNext()) {
-            StatusEffect effect = iterator.next();
+        // Snapshot the list so any effects added during onExpire (e.g. ShadowVeilBonusEffect)
+        // don't cause ConcurrentModificationException
+        List<StatusEffect> snapshot = new ArrayList<>(statusEffects);
+        List<StatusEffect> toRemove = new ArrayList<>();
+
+        for (StatusEffect effect : snapshot) {
             if (!(effect instanceof StunEffect)) {
                 effect.onRoundEnd(this, engine);
                 if (effect.isExpired()) {
-                    effect.onExpire(this, engine);
-                    iterator.remove();
+                    effect.onExpire(this, engine); // may call addStatusEffect — that's fine now
+                    toRemove.add(effect);
                 }
             }
         }
+
+        statusEffects.removeAll(toRemove);
     }
 
     public String getStatusSummary() {
