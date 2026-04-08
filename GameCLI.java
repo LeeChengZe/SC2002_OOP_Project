@@ -31,9 +31,15 @@ public class GameCLI {
                 "Special Skill: Shield Bash - Deal Basic Attack damage to selected enemy. Selected enemy is unable to take actions for the current turn and the next turn.)");
         System.out.println("2. Wizard (HP: 200, ATK: 50, DEF: 10, SPD: 20 \n" +
                 "Special Skill: Arcane Blast Effect - Deal Basic Attack damage to all enemies currently in combat. Each enemy defeated by Arcane Blast adds 10 to the Wizard's Attack, lasting until end of the level.)");
+        System.out.println("3. Assassin (HP: 220, ATK: 45, DEF: 15, SPD: 40 \n" +
+                "Special Skill: Shadow Veil - Become untargetable; enemy attacks deal 0 damage for the current turn and the next turn.)");
 
-        int choice = readIntInRange(1, 2);
-        return choice == 1 ? new Warrior() : new Wizard();
+        int choice = readIntInRange(1, 3);
+        switch (choice) {
+            case 1: return new Warrior();
+            case 2: return new Wizard();
+            default: return new Assassin();
+        }
     }
 
     private void chooseItems(Player player) {
