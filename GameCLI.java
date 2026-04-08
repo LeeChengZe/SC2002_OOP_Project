@@ -5,22 +5,46 @@ import java.util.Scanner;
 public class GameCLI {
     private final Scanner scanner;
 
+    // Settings from the last game, used for "Replay with same settings"
+    private int lastPlayerChoice = -1;
+    private int[] lastItemChoices = null;
+    private Level lastLevel = null;
+
     public GameCLI() {
         this.scanner = new Scanner(System.in);
     }
 
     public void start() {
         boolean playAgain = true;
+        boolean useSameSettings = false;
         while (playAgain) {
             System.out.println("====== Turn-Based Combat Arena ======");
-            Player player = choosePlayer();
-            chooseItems(player);
-            Level level = chooseLevel();
-            showSetupSummary(player, level);
+
+            Player player;
+            Level level;
+
+            if (useSameSettings && lastPlayerChoice != -1) {
+                // Rebuild player and items from last game's choices
+                player = createPlayer(lastPlayerChoice);
+                for (int itemChoice : lastItemChoices) {
+                    player.getInventory().addItem(createItem(itemChoice));
+                }
+                level = lastLevel;
+                System.out.println("Replaying with same settings...");
+                showSetupSummary(player, level);
+            } else {
+                player = choosePlayer();
+                chooseItems(player);
+                level = chooseLevel();
+                showSetupSummary(player, level);
+            }
 
             BattleEngine engine = new BattleEngine(player, new LevelManager(level), new SpeedTurnOrderStrategy(), this);
             engine.startBattle();
-            playAgain = promptReplay();
+
+            int replayChoice = promptReplay();
+            playAgain = replayChoice != 3;
+            useSameSettings = replayChoice == 2;
         }
         System.out.println("Thanks for Playing, See you soon!");
     }
@@ -34,7 +58,11 @@ public class GameCLI {
         System.out.println("3. Assassin (HP: 220, ATK: 45, DEF: 15, SPD: 40 \n" +
                 "Special Skill: Shadow Veil - Become untargetable; enemy attacks deal 0 damage for the current turn and the next turn.)");
 
-        int choice = readIntInRange(1, 3);
+        lastPlayerChoice = readIntInRange(1, 3);
+        return createPlayer(lastPlayerChoice);
+    }
+
+    private Player createPlayer(int choice) {
         switch (choice) {
             case 1: return new Warrior();
             case 2: return new Wizard();
@@ -44,12 +72,14 @@ public class GameCLI {
 
     private void chooseItems(Player player) {
         System.out.println("Choose 2 single-use items. Duplicates are allowed.");
+        lastItemChoices = new int[2];
         for (int i = 1; i <= 2; i++) {
             System.out.println("Pick item " + i + ":");
             System.out.println("1. Potion (Heal 100HP)");
             System.out.println("2. Power Stone (Free extra use of special skill. No change to the cooldown timer)");
             System.out.println("3. Smoke Bomb (Enemy attacks deal 0 damage for current turn and next turn)");
             int choice = readIntInRange(1, 3);
+            lastItemChoices[i - 1] = choice;
             player.getInventory().addItem(createItem(choice));
         }
     }
@@ -75,14 +105,18 @@ public class GameCLI {
         int choice = readIntInRange(1, 3);
         switch (choice) {
             case 1:
-                return Level.EASY;
+                lastLevel = Level.EASY;
+                break;
             case 2:
-                return Level.MEDIUM;
+                lastLevel = Level.MEDIUM;
+                break;
             case 3:
-                return Level.HARD;
+                lastLevel = Level.HARD;
+                break;
             default:
                 throw new IllegalStateException("Unexpected value: " + choice);
         }
+        return lastLevel;
     }
 
     private void showSetupSummary(Player player, Level level) {
@@ -206,12 +240,12 @@ public class GameCLI {
         }
     }
 
-    private boolean promptReplay() {
+    private int promptReplay() {
         System.out.println("What would you like to do next?");
         System.out.println("1. Replay with new settings");
-        System.out.println("2. Exit");
-        int choice = readIntInRange(1, 2);
-        return choice == 1;
+        System.out.println("2. Replay with same settings");
+        System.out.println("3. Exit");
+        return readIntInRange(1, 3);
     }
 
     private Item selectItem(List<Item> items) {
