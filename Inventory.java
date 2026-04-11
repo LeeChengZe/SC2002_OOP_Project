@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class Inventory {
@@ -15,9 +14,9 @@ public class Inventory {
         return items.remove(item);
     }
 
-    // Returns an unmodifiable view of the items in this inventory
+    // Returns a view of the items in this inventory
     public List<Item> getItems() {
-        return Collections.unmodifiableList(items);
+        return new ArrayList<>(items);
     }
 
     // Returns true only if inventory is empty
