@@ -20,7 +20,7 @@ public class Inventory {
         return Collections.unmodifiableList(items);
     }
 
-    // true if inventory is empty
+    // Returns true only if inventory is empty
     public boolean isEmpty() {
         return items.isEmpty();
     }
