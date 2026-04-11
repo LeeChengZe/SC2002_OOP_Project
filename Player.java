@@ -1,6 +1,8 @@
+// Abstract base class representing a player-controlled character in combat.
 public abstract class Player extends Combatant {
     private final Inventory inventory;
 
+    // constructor
     protected Player(String name, int maxHp, int attack, int defense, int speed) {
         super(name, maxHp, attack, defense, speed);
         this.inventory = new Inventory();
@@ -18,6 +20,7 @@ public abstract class Player extends Combatant {
 
     public abstract Action createSpecialSkillAction(BattleEngine engine, Combatant target, boolean consumeCooldown);
 
+    // prompt player to choose action for their current turn
     public Action getPlayerAction(GameCLI gameCLI, BattleEngine engine) {
         return gameCLI.promptAction(this, engine);
     }

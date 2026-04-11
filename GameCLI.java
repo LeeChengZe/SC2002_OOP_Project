@@ -2,6 +2,16 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * 
+ * GameCLI handles:
+ * 
+ *   1. Displaying the main menu and collecting player/item/level selections at game start
+ *   2. Prompting the player to choose an action each turn during combat
+ *   3. Displaying round summaries (actions taken, player and enemy statuses)
+ *   4. Displaying the final game result (victory or defeat)
+ *   5. saves the last game's settings to support the "Replay with same settings" feature
+ */
 public class GameCLI {
     private final Scanner scanner;
 
@@ -10,14 +20,16 @@ public class GameCLI {
     private int[] lastItemChoices = null;
     private Level lastLevel = null;
 
+    // Constructor
     public GameCLI() {
         this.scanner = new Scanner(System.in);
     }
 
+    // main loop of the game
     public void start() {
         boolean playAgain = true;
         boolean useSameSettings = false;
-        while (playAgain) {
+        while (playAgain) { //continue game until condition to end hits
             System.out.println("====== Turn-Based Combat Arena ======");
 
             Player player;
@@ -49,6 +61,7 @@ public class GameCLI {
         System.out.println("Thanks for Playing, See you soon!");
     }
 
+    // Prompts player to select character class and return chosen player
     private Player choosePlayer() {
         System.out.println("===== Choose your player =====");
         System.out.println("1. Warrior (HP: 260, ATK: 40, DEF: 20, SPD: 30 \n" +
@@ -62,6 +75,7 @@ public class GameCLI {
         return createPlayer(lastPlayerChoice);
     }
 
+    //Instantiates a player based on user choice
     private Player createPlayer(int choice) {
         switch (choice) {
             case 1: return new Warrior();
@@ -70,6 +84,8 @@ public class GameCLI {
         }
     }
 
+    // Prompt user to choose 2 items and adds them to player inventory
+    // (Duplicates are allowed)
     private void chooseItems(Player player) {
         System.out.println("Choose 2 single-use items. Duplicates are allowed.");
         lastItemChoices = new int[2];
@@ -84,6 +100,7 @@ public class GameCLI {
         }
     }
 
+    // Instantiates and returns an item based on user choice
     private Item createItem(int choice) {
         switch (choice) {
             case 1:
@@ -97,6 +114,7 @@ public class GameCLI {
         }
     }
 
+    // Prompts player to choose difficulty level and saves choice
     private Level chooseLevel() {
         System.out.println("Choose difficulty level:");
         System.out.println("1. Easy    - Initial Spawn: 3 Goblins");
@@ -119,6 +137,8 @@ public class GameCLI {
         return lastLevel;
     }
 
+    // prints a summary of the player's chosen class, stats, special skills
+    // and level before the battle starts
     private void showSetupSummary(Player player, Level level) {
         System.out.println("\nSelected Player: " + player.getName());
         System.out.println("HP: " + player.getMaxHp() + " | ATK: " + player.getAttack() + " | DEF: " + player.getDefense() + " | SPD: " + player.getSpeed());
@@ -131,6 +151,7 @@ public class GameCLI {
         System.out.println();
     }
 
+    // Prompt player to choose their desired action
     public Action promptAction(Player player, BattleEngine engine) {
         while (true) {
             System.out.println("\nChoose action for " + player.getName() + " (Round " + engine.getRoundNumber() + "): ");
@@ -152,7 +173,7 @@ public class GameCLI {
                     }
                     Item item = selectItem(player.getInventory().getItems());
                     Combatant target = needsEnemyTarget(item, player) ? selectEnemyTarget(engine.getAliveEnemies()) : player;
-                    return new UseItemAction(item, target);
+                    return new UseItemAction(item, target); // instantiate 
                 case 4:
                     if (!player.isSpecialSkillReady()) {
                         System.out.println("Special skill is on cooldown.");
@@ -166,10 +187,13 @@ public class GameCLI {
         }
     }
 
+    // check if chosen item requires enemy target 
     private boolean needsEnemyTarget(Item item, Player player) {
         return item instanceof PowerStone && player instanceof Warrior;
     }
 
+
+    // Display list of alive enemies and prompt player to select one target
     private Enemy selectEnemyTarget(List<Enemy> enemies) {
         System.out.println("Choose target:");
         for (int i = 0; i < enemies.size(); i++) {
@@ -180,6 +204,8 @@ public class GameCLI {
         return enemies.get(choice - 1);
     }
 
+
+    //Prints summary of each round after all actions ended
     public void displayRoundOutput(BattleEngine engine) {
         System.out.println("\n========== Round " + engine.getRoundNumber() + "! ==========");
 
@@ -187,7 +213,7 @@ public class GameCLI {
         for (String message : engine.getBattleLog().getMessages()) {
             System.out.println(message);
         }
-        engine.getBattleLog().clearMessages();
+        engine.getBattleLog().clearMessages(); 
 
         Player player = engine.getPlayer();
         System.out.println("\nPlayer Status:");
@@ -223,6 +249,8 @@ public class GameCLI {
         }
     }
 
+
+    // Displays game result at the end of the battle
     public void displayGameResult(BattleEngine engine) {
         if (!engine.getBattleLog().getMessages().isEmpty()) {
             displayRoundOutput(engine);
@@ -240,14 +268,18 @@ public class GameCLI {
         }
     }
 
+    // Prompt player to choose what to do after game ends
     private int promptReplay() {
         System.out.println("What would you like to do next?");
         System.out.println("1. Replay with new settings");
-        System.out.println("2. Replay with same settings");
+        System.out.println("2. Replay with same settings"); //additional feature :)
         System.out.println("3. Exit");
         return readIntInRange(1, 3);
     }
 
+
+    // Displays the player's current inventory 
+    // and prompts them to select an item to use.
     private Item selectItem(List<Item> items) {
         System.out.println("Choose item:");
         for (int i = 0; i < items.size(); i++) {
@@ -257,6 +289,8 @@ public class GameCLI {
         return items.get(choice - 1);
     }
 
+
+    // A safety measure for when user inputs a invalid entry 
     private int readIntInRange(int min, int max) {
         while (true) {
             try {
