@@ -29,7 +29,7 @@ public class GameCLI {
     public void start() {
         boolean playAgain = true;
         boolean useSameSettings = false;
-        while (playAgain) { //continue game until condition to end hits
+        while (playAgain) {
             System.out.println("====== Turn-Based Combat Arena ======");
 
             Player player;
