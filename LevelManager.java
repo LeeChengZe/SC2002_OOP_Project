@@ -1,11 +1,17 @@
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+*   Manages enemy spawning for a selected level, including initial and backup waves
+*/
 public class LevelManager {
     private final Level selectedLevel;
     private final List<Enemy> initialEnemies;
     private final List<Enemy> backupEnemies;
 
+    /**
+    *   @param selectedLevel The level that determines which enemies are spawned
+    */
     public LevelManager(Level selectedLevel) {
         this.selectedLevel = selectedLevel;
         this.initialEnemies = createInitialEnemies();
@@ -34,6 +40,9 @@ public class LevelManager {
         return spawned;
     }
 
+    /*
+    *   Builds the initial wave of enemies based on the selected level
+    */
     private List<Enemy> createInitialEnemies() {
         List<Enemy> enemies = new ArrayList<Enemy>(); 
 
@@ -57,6 +66,9 @@ public class LevelManager {
         return enemies;
     }
 
+    /*
+    *   Builds the backup wave of enemies based on the selected level
+    */
     private List<Enemy> createBackupEnemies() {
         List<Enemy> enemies = new ArrayList<Enemy>();
         switch (selectedLevel) {

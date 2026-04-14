@@ -4,16 +4,25 @@ public class UseItemAction implements Action {
     private final Item item;
     private final Combatant target;
 
+    /*
+    *   Store the item to use and the intended target
+    */
     public UseItemAction(Item item, Combatant target) {
         this.item = item;
         this.target = target;
     }
 
+    /*
+    *   Returns the name of this action
+    */
     @Override
     public String getName() {
         return "Use Item";
     }
 
+    /*
+    *   Validate the actor is a player and the item is still available, then uses it
+    */
     @Override
     public void execute(Combatant actor, BattleEngine engine) {
         if (!(actor instanceof Player)) {

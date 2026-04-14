@@ -2,6 +2,10 @@
 public class BasicAttackAction implements Action {
     private final Combatant target;
 
+    /**
+    *   Targets the specified combatant
+    *   @param target This combant will receive the attack
+    */
     public BasicAttackAction(Combatant target) {
         this.target = target;
     }
@@ -11,6 +15,14 @@ public class BasicAttackAction implements Action {
         return "Basic Attack";
     }
 
+    /**
+    *   Executes the attack: validates the target, calculate damage
+    *   Applies the smoke bomb nullification if applicable, and logs the result
+    *   Skip the target if it does not exists or already dead
+    *   Notify if the target was defeated
+    *   @param actor The combatant perform the attack
+    *   @param engine The battle engine manage the game state and the battle logs
+    */
     @Override
     public void execute(Combatant actor, BattleEngine engine) {
         if (target == null || !target.isAlive()) {

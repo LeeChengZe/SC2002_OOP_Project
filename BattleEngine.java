@@ -1,6 +1,9 @@
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+*   This class manages the overall flow of the game
+*/
 public class BattleEngine {
     private final Player player;
     private final LevelManager levelManager;
@@ -22,6 +25,9 @@ public class BattleEngine {
         this.smokeBombTurnsRemaining = 0;
     }
 
+    /*
+    *   Runs the battle loop until it is over, then display the final game results
+    */
     public void startBattle() {
         while (!isBattleOver()) {
             processRound();
@@ -37,7 +43,10 @@ public class BattleEngine {
         }
         gameCLI.displayGameResult(this);
     }
-
+    /*
+    *   Processes a single round, build the combatant list, determine the turn order
+    *   Execute each combatant action while handling status effects
+    */
     private void processRound() {
         List<Combatant> activeCombatants = new ArrayList<>();
         if (player.isAlive()) {
@@ -91,6 +100,9 @@ public class BattleEngine {
         }
     }
 
+    /*
+    *   Spawns backup enemies if all current enemies are defated and backup are available
+    */
     private void handleBackupSpawnIfNeeded() {
         if (getAliveEnemies().isEmpty() && levelManager.hasBackupEnemies()) {
             List<Enemy> spawned = levelManager.spawnBackupEnemies();
@@ -110,6 +122,9 @@ public class BattleEngine {
         return player.isAlive() && getAliveEnemies().isEmpty() && !levelManager.hasBackupEnemies();
     }
 
+    /*
+    *   Returns the list of enemies that are still alive
+    */
     public List<Enemy> getAliveEnemies() {
         List<Enemy> alive = new ArrayList<>();
         for (Enemy enemy : enemies) {

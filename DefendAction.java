@@ -4,8 +4,11 @@ public class DefendAction implements Action {
     public String getName() {
         return "Defend";
     }
-
-    // defines the behavior for a defend action in combat
+    /**
+    *   Applies the additional defense
+    *   @param actor Apply the defense buff to this Combatant
+    *   @param engine Log the message and manage the state of the game
+    */
     @Override
     public void execute(Combatant actor, BattleEngine engine) {
         actor.addStatusEffect(new DefenseBuffEffect(10, 2), engine);

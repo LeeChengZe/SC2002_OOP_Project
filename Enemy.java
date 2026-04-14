@@ -1,8 +1,8 @@
-// the Enemy class is an abstract class that extends Combatant and represents the enemies in the game.
+// The Enemy class is an abstract class that extends Combatant and represents the enemies in the game.
 public abstract class Enemy extends Combatant {
     private EnemyActionStrategy actionStrategy;
 
-    // create enemy constructor with a default attack strategy
+    // Create enemy constructor with a default attack strategy
     protected Enemy(String name, int maxHp, int attack, int defense, int speed) {
         super(name, maxHp, attack, defense, speed);
         this.actionStrategy = new BasicAttackOnlyStrategy();
